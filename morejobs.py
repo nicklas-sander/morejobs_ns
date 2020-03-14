@@ -2,7 +2,7 @@
 
 import numpy as np
 import pandas as pd
-import sklearn
+from sklearn.preprocessing import StandardScaler
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -33,5 +33,15 @@ df_joined['job_avg'].fillna(df_joined['company_avg'], inplace=True) # if no job 
 df_joined['avg']= (df_joined['company_avg']+df_joined['job_avg'])/2 # calculate average of company and job salary
 df_joined['salary'].fillna(df_joined['avg'], inplace=True)
 
-
+#scaling all input features including salary using StandardScaler
+df_joined_final = df_joined.drop(columns=['company_avg','job_avg','avg'])
+df_joined_feature = df_joined_final.drop(columns=['job_title_full','user_id','company','has_applied'])
+df_joined_label = pd.DataFrame(df_joined_final['has_applied'])
+# using standard scaler
+scaler = StandardScaler()
+scaler.fit(df_joined_feature)
+scaled = scaler.transform(df_joined_feature)
+df_joined_feature_scaled = pd.DataFrame(scaled, columns=df_joined_feature.columns, index=df_joined_feature.index)
+# rejoining the scaled values with the label
+df_joined_scaled = df_joined_label.join(df_joined_feature_scaled)
 

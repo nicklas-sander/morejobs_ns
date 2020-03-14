@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from matplotlib import pyplot as plt
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -45,3 +46,26 @@ df_joined_feature_scaled = pd.DataFrame(scaled, columns=df_joined_feature.column
 # rejoining the scaled values with the label
 df_joined_scaled = df_joined_label.join(df_joined_feature_scaled)
 
+df_corr = df_joined_scaled.corr(method='pearson')
+df_corr = df_corr.loc['has_applied']
+df_corr.plot()
+plt.show()
+
+#feature selection after correlation check v25 and v30
+
+df_selected = df_joined_scaled[['v25','v30','has_applied']]
+
+x_train, x_test, y_train, y_test = train_test_split(df_joined_scaled[['v25','v30']], df_joined_scaled['has_applied'], test_size=0.3)
+
+x_train_df = pd.DataFrame(x_train, columns={"v25", "v30"})
+y_train_df = pd.DataFrame(y_train, columns={"has_applied"})
+
+train_df = x_train_df.join(y_train_df)
+
+plt.figure()
+plt.scatter(train_df[train_df["has_applied"]==1]["v25"], train_df[train_df["has_applied"]==1]["v30"], marker='x', color="green")
+plt.scatter(train_df[train_df["has_applied"]==0]["v25"], train_df[train_df["has_applied"]==0]["v30"], marker='o', color="red")
+plt.legend(['has applied', 'has not applied'],bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.title("Training Data in scatterplot")
+
+plt.show()

@@ -25,3 +25,13 @@ df_jobdesc_avgsalary = df_jobdesc.groupby(['job_title_full']).mean()
 df_jobdesc_avgsalary.rename(columns={"salary":"job_avg"}, inplace=True)
 df_jobdesc_avgcompany = df_jobdesc.groupby(['company']).mean()
 df_jobdesc_avgcompany.rename(columns={"salary":"company_avg"}, inplace=True)
+
+#imputing salary by mean of average position and company salary
+df_joined = pd.merge(df_joined, df_jobdesc_avgcompany,  how='left', left_on=['company'], right_on = ['company'])
+df_joined = pd.merge(df_joined, df_jobdesc_avgsalary,  how='left', left_on=['job_title_full'], right_on = ['job_title_full'])
+df_joined['job_avg'].fillna(df_joined['company_avg'], inplace=True) # if no job average is available consider only company average
+df_joined['avg']= (df_joined['company_avg']+df_joined['job_avg'])/2 # calculate average of company and job salary
+df_joined['salary'].fillna(df_joined['avg'], inplace=True)
+
+
+

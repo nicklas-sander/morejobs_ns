@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn import svm
 from sklearn.model_selection import train_test_split
@@ -115,9 +115,16 @@ linear_pred = lr.predict(x_test.values)
 data = {"actual":y_test, "predicted":linear_pred}
 
 predictions_df = pd.DataFrame(data)
-predictions_df["predicted"] = round(predictions_df["predicted"],0)
+predictions_df["predicted"] = round(predictions_df["predicted"], 0)
 fpr, tpr, thresholds = metrics.roc_curve(y_test, predictions_df["predicted"])
 auc_score = metrics.auc(fpr, tpr)
 print("AUC for Linear Regression is: {}".format(auc_score))
 
+# Classification using logistic Regression
 
+model_log = LogisticRegression(C=1000)
+model_log.fit(x_train, y_train)
+log_pred = model_log.predict(x_test)
+fpr, tpr, thresholds = metrics.roc_curve(y_test, log_pred)
+auc_score = metrics.auc(fpr, tpr)
+print("AUC for Logistic Regression is: {}".format(auc_score))

@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from sklearn import metrics
+from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn import svm
 from sklearn.model_selection import train_test_split
@@ -97,3 +98,26 @@ print("Test accuracy of Support Vector Machine is: {} percent".format(round((1-(
 fpr, tpr, thresholds = metrics.roc_curve(y_test, pred)
 auc_score = metrics.auc(fpr, tpr)
 print("AUC for Support Vector Machine is: {}".format(auc_score))
+
+# Applying Linear Regression and 0.5 classification split
+lr = LinearRegression()
+lr.fit(x_train.values, y_train)
+linear_pred = lr.predict(x_train.values)
+
+data = {"actual": y_train, "predicted": linear_pred}
+
+predictions_df = pd.DataFrame(data)
+predictions_df["predicted"] = round(predictions_df["predicted"], 0)
+
+# Evaluating performance on Test dataset
+linear_pred = lr.predict(x_test.values)
+
+data = {"actual":y_test, "predicted":linear_pred}
+
+predictions_df = pd.DataFrame(data)
+predictions_df["predicted"] = round(predictions_df["predicted"],0)
+fpr, tpr, thresholds = metrics.roc_curve(y_test, predictions_df["predicted"])
+auc_score = metrics.auc(fpr, tpr)
+print("AUC for Linear Regression is: {}".format(auc_score))
+
+

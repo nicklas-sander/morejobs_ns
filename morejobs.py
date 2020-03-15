@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from sklearn import svm
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 import warnings
@@ -70,3 +71,24 @@ plt.legend(['has applied', 'has not applied'],bbox_to_anchor=(1.05, 1), loc='upp
 plt.title("Training Data in scatterplot")
 
 plt.show()
+
+# support vector machine for classification of binary label
+
+# training the model based on the training data split
+clf = svm.SVC()
+clf.fit(x_train, y_train)
+
+#predicting the training data to evaluate training performance
+pred = clf.predict(x_train)
+data = {"actual":y_train, "predicted":pred}
+predictions_df = pd.DataFrame(data)
+predictions_df["dif"] = abs(predictions_df["actual"]-predictions_df["predicted"])
+print ("Training accuracy of Support Vector Machine is: {} percent".format(round((1-(sum(predictions_df["dif"])/len(predictions_df.index)))*100,1)))
+
+#predicting the test data to evaluate test performance
+pred = clf.predict(x_test)
+data = {"actual":y_test, "predicted":pred}
+predictions_df = pd.DataFrame(data)
+predictions_df["dif"] = abs(predictions_df["actual"]-predictions_df["predicted"])
+print ("Test accuracy of Support Vector Machine is: {} percent".format(round((1-(sum(predictions_df["dif"])/len(predictions_df.index)))*100,1)))
+

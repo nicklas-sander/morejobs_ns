@@ -27,20 +27,20 @@ df_joined['job_title_full'] = df_joined['job_title_full'].str.strip()
 
 # calculating the average salary by position and company for imputation of missing salaries
 df_jobdesc_avgsalary = df_jobdesc.groupby(['job_title_full']).mean()
-df_jobdesc_avgsalary.rename(columns={"salary":"job_avg"}, inplace=True)
+df_jobdesc_avgsalary.rename(columns={"salary": "job_avg"}, inplace=True)
 df_jobdesc_avgcompany = df_jobdesc.groupby(['company']).mean()
-df_jobdesc_avgcompany.rename(columns={"salary":"company_avg"}, inplace=True)
+df_jobdesc_avgcompany.rename(columns={"salary": "company_avg"}, inplace=True)
 
 # imputing salary by mean of average position and company salary
 df_joined = pd.merge(df_joined, df_jobdesc_avgcompany,  how='left', left_on=['company'], right_on = ['company'])
 df_joined = pd.merge(df_joined, df_jobdesc_avgsalary,  how='left', left_on=['job_title_full'], right_on = ['job_title_full'])
 df_joined['job_avg'].fillna(df_joined['company_avg'], inplace=True)  # if no job average is available consider only company average
-df_joined['avg']= (df_joined['company_avg']+df_joined['job_avg'])/2  # calculate average of company and job salary
+df_joined['avg'] = (df_joined['company_avg']+df_joined['job_avg'])/2  # calculate average of company and job salary
 df_joined['salary'].fillna(df_joined['avg'], inplace=True)
 
 # scaling all input features including salary using StandardScaler
-df_joined_final = df_joined.drop(columns=['company_avg','job_avg','avg'])
-df_joined_feature = df_joined_final.drop(columns=['job_title_full','user_id','company','has_applied'])
+df_joined_final = df_joined.drop(columns=['company_avg', 'job_avg', 'avg'])
+df_joined_feature = df_joined_final.drop(columns=['job_title_full', 'user_id', 'company', 'has_applied'])
 df_joined_label = pd.DataFrame(df_joined_final['has_applied'])
 # using standard scaler
 scaler = StandardScaler()
@@ -69,7 +69,7 @@ train_df = x_train_df.join(y_train_df)
 plt.figure()
 plt.scatter(train_df[train_df["has_applied"] == 1]["v25"], train_df[train_df["has_applied"] == 1]["v30"], marker='x', color="green")
 plt.scatter(train_df[train_df["has_applied"] == 0]["v25"], train_df[train_df["has_applied"] == 0]["v30"], marker='o', color="red")
-plt.legend(['has applied', 'has not applied'],bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(['has applied', 'has not applied'], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
 plt.title("Training Data in scatterplot")
 
 plt.show()
@@ -82,7 +82,7 @@ clf.fit(x_train, y_train)
 
 # predicting the training data to evaluate training performance
 pred = clf.predict(x_train)
-data = {"actual":y_train, "predicted":pred}
+data = {"actual": y_train, "predicted": pred}
 predictions_df = pd.DataFrame(data)
 predictions_df["dif"] = abs(predictions_df["actual"]-predictions_df["predicted"])
 print("Training accuracy of Support Vector Machine is: {} percent".format(round((1-(sum(predictions_df["dif"])/len(predictions_df.index)))*100, 1)))
@@ -109,10 +109,10 @@ data = {"actual": y_train, "predicted": linear_pred}
 predictions_df = pd.DataFrame(data)
 predictions_df["predicted"] = round(predictions_df["predicted"], 0)
 
-# Evaluating performance on Test dataset
+# Evaluating performance on Test data set
 linear_pred = lr.predict(x_test.values)
 
-data = {"actual":y_test, "predicted":linear_pred}
+data = {"actual":y_test, "predicted": linear_pred}
 
 predictions_df = pd.DataFrame(data)
 predictions_df["predicted"] = round(predictions_df["predicted"], 0)

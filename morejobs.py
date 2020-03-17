@@ -50,9 +50,13 @@ df_joined_feature_scaled = pd.DataFrame(scaled, columns=df_joined_feature.column
 # rejoining the scaled values with the label
 df_joined_scaled = df_joined_label.join(df_joined_feature_scaled)
 
+# calculating correlation of input features to label and visualizing graph
 df_corr = df_joined_scaled.corr(method='pearson')
 df_corr = df_corr.loc['has_applied']
 df_corr.plot()
+plt.ylabel("Correlation Coefficient")
+plt.xlabel("Features")
+plt.title("Pearson Correlation of Inputs to label")
 plt.show()
 
 # feature selection after correlation check v25 and v30
